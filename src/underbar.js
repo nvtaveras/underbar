@@ -41,7 +41,7 @@ var _ = {};
   _.last = function(array, n) {
     var len = array.length;
 
-    if (typeof n === "undefined") {
+    if (typeof n === 'undefined') {
       return array[len-1];
     }
 
@@ -163,7 +163,7 @@ var _ = {};
   // Note: you will nead to learn a bit about .apply to complete this.
   _.invoke = function(collection, functionOrKey, args) {
     return _.map(collection, function(el) {
-      return typeof functionOrKey === "function" ?
+      return typeof functionOrKey === 'function' ?
         functionOrKey.apply(el,args) :
         el[functionOrKey].apply(el,args);
     });
@@ -184,7 +184,7 @@ var _ = {};
   //   }, 0); // should be 6
   _.reduce = function(collection, iterator, accumulator) {
     // Get first element of array/object when accumulator is undefined
-    if (typeof accumulator === "undefined") {
+    if (typeof accumulator === 'undefined') {
       accumulator = collection[Object.keys(collection)[0]];
     }
     _.each(collection, function(el, i, col) {
@@ -211,7 +211,7 @@ var _ = {};
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
     
-    if (typeof iterator === "undefined") {
+    if (typeof iterator === 'undefined') {
       iterator = _.identity;
     }
 
@@ -225,7 +225,7 @@ var _ = {};
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
 
-    if (typeof iterator === "undefined") {
+    if (typeof iterator === 'undefined') {
       iterator = _.identity;
     }
 
@@ -254,11 +254,27 @@ var _ = {};
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+    _.each(arguments, function(extension) {
+      _.each(Object.keys(extension), function(key) {
+        obj[key] = extension[key];
+      });
+    });
+
+    return obj;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    _.each(arguments, function(extension) {
+      _.each(Object.keys(extension), function(key) {
+        if (typeof obj[key] === 'undefined') {
+          obj[key] = extension[key];
+        }
+      });
+    });
+    
+    return obj;
   };
 
 
@@ -300,6 +316,14 @@ var _ = {};
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    var memo = {};
+
+    return function(arg) {
+      if (typeof memo[arg] !== 'undefined') {
+        return memo[arg];
+      }
+      return memo[arg] = func(arg);
+    }
   };
 
   // Delays a function for the given number of milliseconds, and then calls
