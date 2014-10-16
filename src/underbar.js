@@ -183,6 +183,15 @@ var _ = {};
   //     return total + number;
   //   }, 0); // should be 6
   _.reduce = function(collection, iterator, accumulator) {
+    // Get first element of array/object when accumulator is undefined
+    if (typeof accumulator === "undefined") {
+      accumulator = collection[Object.keys(collection)[0]];
+    }
+    _.each(collection, function(el, i, col) {
+      accumulator = iterator(accumulator, el);
+    });
+
+    return accumulator;
   };
 
   // Determine if the array or object contains a given value (using `===`).
