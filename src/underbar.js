@@ -412,6 +412,28 @@ var _ = {};
   //
   // See the Underbar readme for details.
   _.throttle = function(func, wait) {
+    var callQueue = [];
+    var waiting = false;
+    var result = null;
+
+    return function() {
+      var release = function() {
+        if (!waiting && callQueue.length > 0) {
+          waiting = true;
+          result = func.apply(this, callQueue.shift());
+          window.setTimeout(function() {
+            waiting = false;
+            release();
+          }, wait);
+        }
+      }
+
+      if (callQueue.length < 2) {
+        callQueue.push(Array.prototype.slice(arguments));
+        release();
+      } 
+      return result;
+    };
   };
 
 }).call(this);
